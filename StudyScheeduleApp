@@ -1,0 +1,173 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+public class StudyScheeduleApp {
+    private static List<Task> tasks = new ArrayList<>();
+    private static JFrame frame;
+    private static JPanel panel;
+    private static JTextArea textArea;
+
+    private static void createAndShowGUI() {
+        frame = new JFrame("Study Schedule App");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 300);
+
+        panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JLabel nameLabel = new JLabel("Name:");
+        JTextField nameField = new JTextField(20);
+
+        JLabel emailLabel = new JLabel("Email:");
+        JTextField emailField = new JTextField(20);
+
+        JLabel passwordLabel = new JLabel("Password:");
+        JPasswordField passwordField = new JPasswordField(20);
+
+        JButton registerButton = new JButton("Register");
+
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = nameField.getText();
+                String email = emailField.getText();
+                String password = new String(passwordField.getPassword());
+
+                // Registration information
+                String registrationInfo = "Name: " + name + "\nEmail: " + email + "\nPassword: " + password;
+
+                displayToDoListGUI();
+            }
+        });
+
+        panel.add(nameLabel);
+        panel.add(nameField);
+        panel.add(emailLabel);
+        panel.add(emailField);
+        panel.add(passwordLabel);
+        panel.add(passwordField);
+        panel.add(registerButton);
+
+        frame.add(panel);
+        frame.setVisible(true);
+    }
+
+    private static void displayToDoListGUI() {
+        frame.setVisible(false);
+
+        JFrame todoFrame = new JFrame("To-Do List");
+        todoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        todoFrame.setSize(600, 400);
+
+        JPanel todoPanel = new JPanel();
+        todoPanel.setLayout(new BoxLayout(todoPanel, BoxLayout.Y_AXIS));
+
+        int numberOfComponents = 5; // Example: Number of subject components
+
+        for (int i = 1; i <= numberOfComponents; i++) {
+            JLabel subjectLabel = new JLabel("Subject " + i + ":");
+            JTextField subjectField = new JTextField(20);
+
+            JLabel timeLabel = new JLabel("Time " + i + ":");
+            JTextField timeField = new JTextField(20);
+
+            todoPanel.add(subjectLabel);
+            todoPanel.add(subjectField);
+            todoPanel.add(timeLabel);
+            todoPanel.add(timeField);
+        }
+
+        JButton addButton = new JButton("Add Task");
+
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 1; i <= numberOfComponents; i++) {
+                    JTextField currentSubjectField = (JTextField) todoPanel.getComponent((i - 1) * 4 + 1);
+                    JTextField currentTimeField = (JTextField) todoPanel.getComponent((i - 1) * 4 + 3);
+
+                    String subject = currentSubjectField.getText();
+                    String time = currentTimeField.getText();
+
+                    if (!subject.equals("") && !time.equals("")) {
+                        tasks.add(new Task(subject, time));
+                    }
+                }
+
+                displayHomeScreenGUI();
+                todoFrame.dispose();
+            }
+        });
+
+        todoPanel.add(addButton);
+
+        todoFrame.add(todoPanel);
+        todoFrame.setVisible(true);
+    }
+
+    private static void displayHomeScreenGUI() {
+        JFrame homeFrame = new JFrame("Home Screen");
+        homeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        homeFrame.setSize(500, 300);
+
+        JPanel homePanel = new JPanel();
+        homePanel.setLayout(new BoxLayout(homePanel, BoxLayout.Y_AXIS));
+
+        JLabel welcomeLabel = new JLabel("Welcome!");
+
+        JButton reminderButton = new JButton("Set Reminder");
+        reminderButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Implement reminder functionality here
+                JOptionPane.showMessageDialog(homeFrame, "Reminder set!");
+            }
+        });
+
+        JTextArea calendarArea = new JTextArea(10, 40);
+        JScrollPane calendarScrollPane = new JScrollPane(calendarArea);
+
+        for (int i = 0; i < Math.min(10, tasks.size()); i++) {
+            JLabel taskLabel = new JLabel("Subject " + (i + 1) + ": " + tasks.get(i).getSubject() + ", Time " + (i + 1) + ": " + tasks.get(i).getTime());
+            homePanel.add(taskLabel);
+        }
+
+        homePanel.add(welcomeLabel);
+        homePanel.add(reminderButton);
+        homePanel.add(calendarScrollPane);
+
+        homeFrame.add(homePanel);
+        homeFrame.setVisible(true);
+    }
+
+    static class Task {
+        private String subject;
+        private String time;
+
+        public Task(String subject, String time) {
+            this.subject = subject;
+            this.time = time;
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public String getTime() {
+            return time;
+        }
+    }
+
+    public static void main(String[] args) {
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI();
+            }
+        });
+    }
+}
+
+
